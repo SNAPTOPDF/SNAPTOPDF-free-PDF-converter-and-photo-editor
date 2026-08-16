@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Search Console verification -->
+  
+  
+
+  <meta name="description" content="SNAPTOPDF is a free browser-based PDF converter and photo editor. Process your files locally without uploading them.">
+  <meta name="theme-color" content="#0b1024">
+  <title>SNAPTOPDF — Free PDF Converter & Photo Editor</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #070d1d;
+      color: #f5f7ff;
+    }
+    .hero {
+      text-align: center;
+      padding: 46px 18px 42px;
+      background: linear-gradient(145deg, #111a3b, #0b1024);
+      border-bottom: 1px solid #26304e;
+    }
+    .brand {
+      font-size: clamp(42px, 10vw, 64px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      margin: 0;
+    }
+    .brand span { color: #7b5cff; }
+    .tagline {
+      max-width: 700px;
+      margin: 12px auto 0;
+      color: #aeb8d7;
+      font-size: clamp(18px, 4.5vw, 26px);
+      line-height: 1.3;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 34px 16px 10px;
+    }
+    button, select, input[type="file"]::file-selector-button {
+      border: 0;
+      border-radius: 18px;
+      font: inherit;
+    }
+    .tab, .primary {
+      color: white;
+      background: linear-gradient(135deg, #8b6cff, #6548ff);
+      padding: 17px 28px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(101,72,255,.18);
+    }
+    .tab.active { outline: 3px solid rgba(255,255,255,.16); }
+    main {
+      max-width: 900px;
+      margin: 24px auto 60px;
+      padding: 0 16px;
+    }
+    .panel {
+      background: #10182e;
+      border: 1px solid #293552;
+      border-radius: 28px;
+      padding: clamp(24px, 6vw, 38px);
+      box-shadow: 0 16px 50px rgba(0,0,0,.15);
+    }
+    .panel h2 {
+      margin: 0 0 26px;
+      font-size: clamp(28px, 7vw, 42px);
+    }
+    .dropzone {
+      border: 3px dashed #45527d;
+      border-radius: 26px;
+      padding: 42px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .dropzone p {
+      color: #b5bed9;
+      font-size: 18px;
+      line-height: 1.4;
+      margin: 14px 0 0;
+    }
+    input[type="file"] { max-width: 100%; color: #cbd3ea; }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .selectbox {
+      background: #1a2543;
+      border-radius: 18px;
+      padding: 13px 18px;
+      color: white;
+      font-size: 18px;
+    }
+    select { background: transparent; color: white; padding: 3px 10px; }
+    option { color: #111; }
+    .note {
+      color: #99a6c9;
+      line-height: 1.4;
+      font-size: 16px;
+      margin-top: 22px;
+    }
+    .hidden { display: none; }
+    .editor-preview {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      background: #080d1b;
+      border-radius: 18px;
+      margin: 18px 0;
+      display: block;
+    }
+    .sliders {
+      display: grid;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    label { color: #c7d0e7; }
+    input[type="range"] { width: 100%; margin-top: 8px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .secondary {
+      background: #1b2747;
+      color: white;
+      padding: 13px 18px;
+      cursor: pointer;
+      border-radius: 15px;
+    }
+    .status {
+      color: #aeb9d5;
+      margin-top: 14px;
+      min-height: 24px;
+    }
+    footer {
+      text-align: center;
+      color: #7f8baa;
+      padding: 10px 20px 40px;
+      font-size: 14px;
+    }
+  .brand span{font-size:clamp(38px,9vw,64px);font-weight:900;letter-spacing:1px;}
+</style>
+<meta name="google-site-verification" content="gyhHQU9CatLt_wDXwwHQSn2AIQkg3Sx7e1zc_Ct9nNw" />
+</head>
+
+<body>
+  <header class="hero">
+    <h1 class="brand">⚡ <span>SNAPTOPDF</span></h1>
+    <p class="tagline">Free PDF converter + photo editor — works in your browser</p>
+  </header>
+
+  <nav class="tabs" aria-label="Tools">
+    <button class="tab active" id="pdfTab">📄 PDF Converter</button>
+    <button class="tab" id="photoTab">🖼️ Photo Editor</button>
+  </nav>
+
+  <main>
+    <section class="panel" id="pdfPanel">
+      <h2>Images → PDF</h2>
+
+      <div class="dropzone">
+        <input id="imageFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        <p>Select one or more JPG/PNG/WebP images.</p>
+      </div>
+
+      <div class="controls">
+        <div class="selectbox">
+          Page size
+          <select id="pageSize">
+            <option value="a4">A4</option>
+            <option value="letter">Letter</option>
+            <option value="a5">A5</option>
+          </select>
+        </div>
+        <button class="primary" id="makePdf">Download PDF</button>
+      </div>
+
+      <div class="status" id="pdfStatus"></div>
+      <p class="note">Files are processed locally in your browser. Nothing is uploaded by this page.</p>
+    </section>
+
+    <section class="panel hidden" id="photoPanel">
+      <h2>Photo Editor</h2>
+
+      <div class="dropzone">
+        <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp">
+        <p>Choose an image to edit it in your browser.</p>
+      </div>
+
+      <img id="preview" class="editor-preview hidden" alt="Photo preview">
+
+      <div id="editorControls" class="hidden">
+        <div class="sliders">
+          <label>Brightness
+            <input id="brightness" type="range" min="50" max="150" value="100">
+          </label>
+          <label>Contrast
+            <input id="contrast" type="range" min="50" max="150" value="100">
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" id="rotate">↻ Rotate</button>
+          <button class="secondary" id="reset">Reset</button>
+          <button class="primary" id="downloadPhoto">Download PNG</button>
+        </div>
+        <div class="status" id="photoStatus"></div>
+      </div>
+
+      <p class="note">Your photo stays in your browser while you edit it.</p>
+    </section>
+  </main>
+
+  <footer>© 2026 SNAPTOPDF · Free browser-based tools</footer>
+
+  <script>
+    const pdfTab = document.getElementById('pdfTab');
+    const photoTab = document.getElementById('photoTab');
+    const pdfPanel = document.getElementById('pdfPanel');
+    const photoPanel = document.getElementById('photoPanel');
+
+    function showPanel(which) {
+      const pdf = which === 'pdf';
+      pdfPanel.classList.toggle('hidden', !pdf);
+      photoPanel.classList.toggle('hidden', pdf);
+      pdfTab.classList.toggle('active', pdf);
+      photoTab.classList.toggle('active', !pdf);
+    }
+    pdfTab.onclick = () => showPanel('pdf');
+    photoTab.onclick = () => showPanel('photo');
+
+    document.getElementById('makePdf').onclick = async () => {
+      const files = [...document.getElementById('imageFiles').files];
+      const status = document.getElementById('pdfStatus');
+
+      if (!files.length) {
+        status.textContent = 'Please choose at least one image.';
+        return;
+      }
+
+      status.textContent = 'Creating PDF…';
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const size = document.getElementById('pageSize').value;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: size });
+
+        for (let i = 0; i < files.length; i++) {
+          if (i > 0) pdf.addPage();
+          const dataUrl = await fileToDataURL(files[i]);
+          const img = await loadImage(dataUrl);
+
+          const pageW = pdf.internal.pageSize.getWidth();
+          const pageH = pdf.internal.pageSize.getHeight();
+          const margin = 8;
+          const maxW = pageW - margin * 2;
+          const maxH = pageH - margin * 2;
+          const scale = Math.min(maxW / img.width, maxH / img.height);
+          const w = img.width * scale;
+          const h = img.height * scale;
+
+          pdf.addImage(dataUrl, 'AUTO', (pageW - w) / 2, (pageH - h) / 2, w, h);
+        }
+
+        pdf.save('snaptopdf-images.pdf');
+        status.textContent = 'PDF downloaded successfully.';
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Could not create the PDF. Please try another image.';
+      }
+    };
+
+    function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    const photoFile = document.getElementById('photoFile');
+    const preview = document.getElementById('preview');
+    const editorControls = document.getElementById('editorControls');
+    const brightness = document.getElementById('brightness');
+    const contrast = document.getElementById('contrast');
+    let originalSrc = '';
+    let rotation = 0;
+
+    photoFile.onchange = async () => {
+      const file = photoFile.files[0];
+      if (!file) return;
+      originalSrc = await fileToDataURL(file);
+      rotation = 0;
+      brightness.value = 100;
+      contrast.value = 100;
+      preview.src = originalSrc;
+      preview.classList.remove('hidden');
+      editorControls.classList.remove('hidden');
+      updatePreview();
+    };
+
+    function updatePreview() {
+      preview.style.filter =
+        `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
+      preview.style.transform = `rotate(${rotation}deg)`;
+    }
+
+    brightness.oninput = updatePreview;
+    contrast.oninput = updatePreview;
+
+    document.getElementById('rotate').onclick = () => {
+      rotation = (rotation + 90) % 360;
+      updatePreview();
+    };
+
+    document.getElementById('reset').onclick = () => {
+      brightness.value = 100;
+      contrast.value = 100;
+      rotation = 0;
+      updatePreview();
+    };
+
+    document.getElementById('downloadPhoto').onclick = async () => {
+      if (!originalSrc) return;
+      const img = await loadImage(originalSrc);
+      const angle = rotation % 360;
+      const rotated = angle === 90 || angle === 270;
+      const canvas = document.createElement('canvas');
+      canvas.width = rotated ? img.height : img.width;
+      canvas.height = rotated ? img.width : img.height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%)`;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(angle * Math.PI / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      const link = document.createElement('a');
+      link.download = 'snaptopdf-edited.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      document.getElementById('photoStatus').textContent =
+        'Edited image downloaded successfully.';
+    };
+  </script>
+</body>
+</html>
